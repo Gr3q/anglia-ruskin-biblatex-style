@@ -1,0 +1,119 @@
+\documentclass[10pt,a4paper]{article}
+
+
+\usepackage{filecontents}
+\begin{filecontents*}{\jobname.bib}
+@online{test,
+author = {John Newman},
+title = {How I created a bibliography entry},
+year = {2019},
+url = {http://test.com},
+urldate = {2019-01-01},
+}
+
+@ARTICLE{example,
+  author  = {Other, Anthony Norman},
+  title   = {Some things I did},
+  year    = {2014},
+  journal = {J.~Irrep. Res.},
+  volume  = {1},
+  number  = {1},
+  pages   = {1-10}
+}
+\end{filecontents*}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[
+	backend=biber,
+	style=ext-authoryear-comp,
+	giveninits,
+	uniquename=init,
+	maxbibnames=999,
+	urldate=long,
+	innamebeforetitle,
+	articlein=false
+]{biblatex}
+
+% 1.2
+\DeclareDelimFormat*{nameyeardelim}{\addcomma\space}
+\DeclareDelimFormat[textcite]{nameyeardelim}{\addspace}
+
+% 2.5
+\DeclareDelimFormat{andothersdelim}{\addcomma\space}
+
+% 2.7
+\renewcommand*{\compcitedelim}{\multicitedelim}
+
+% 2.8
+\makeatletter
+\AtEveryCitekey{\global\undef\cbx@lastyear}
+\makeatother
+
+% ignore 2.10 for the time being
+
+% 4.1
+\DeclareNameAlias{sortname}{family-given}
+\DeclareFieldFormat{biblabeldate}{#1}
+\DeclareFieldAlias{biblistlabeldate}{biblabeldate}
+
+% 4.3
+\DeclareDelimFormat{editortypedelim}{\addspace}
+\DeclareDelimFormat{translatortypedelim}{\addspace}
+
+% 4.4
+\DeclareFieldFormat
+  [article,inbook,incollection,inproceedings,patent,thesis,unpublished]
+  {title}{#1\isdot}
+
+% as for the year of the chapterv vs year of the book in 4.4
+% I have never seen such a distinction and in general I imagine
+% it would be quite hard to find out the year of a chapter
+% in a collection work since only the year of the collection is given
+% I imagine that in practice you would almost always end up douplicating
+% the year.
+
+% 4.8 & 5.11
+\DefineBibliographyStrings{english}{
+  urlfrom   = {available at},
+  urlseen   = {accessed},
+  bathesis  = {BA},
+  mathesis  = {MA},
+  phdthesis = {PhD},
+}
+% or {<#1>}
+% or {\ensuremath{\langle}#1\ensuremath{\rangle}}
+% or {guilsinglleft#1\guilsingleright}
+\DeclareFieldFormat{url}{[online]\space Available at:\space <\url{#1}>}
+\DeclareFieldFormat{urldate}{\mkbibbrackets{\bibcpstring{urlseen}\space#1}}
+
+% 4.9
+\renewcommand*{\jourvoldelim}{\addcomma\space}
+\renewcommand*{\volnumdelim}{}
+\DeclareFieldFormat[article,periodical]{number}{\mkbibparens{#1}}
+
+\renewcommand*{\volnumdatedelim}{\addcomma\space}
+\DeclareFieldFormat{issuedate}{#1}
+
+% 4.12 :-(
+% note that I used the new preferred resolver https://doi.org/
+% instead of http://dx.doi.org/
+\DeclareFieldFormat{doi}{\url{https://doi.org/#1}}
+
+
+\addbibresource{\jobname.bib}
+
+\begin{document}
+This is my \emph{first} document prepared in \LaTeX\ I typed it on \today.
+
+We have seen that to typeset something in \LaTeX, we type in the text to be typeset together with some \LaTeX\ commands. Words must be separated by spaces (does not matter how many)and lines maybe broken arbitrarily.
+
+The end of a paragraph is specified by a \emph{blank line}in the input. In other words, whenever you want to start a newparagraph, just leave a blank line and proceed. \autocite{test}
+
+Note the difference in right and left quotes  in `single quotes' and ``double quotes''.
+
+
+sadasdasddas \autocite{example}
+
+\printbibliography
+\end{document}
